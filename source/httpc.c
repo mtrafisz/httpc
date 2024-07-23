@@ -74,39 +74,77 @@ void _httpc_add_header(httpc_header_t* header_list, httpc_header_t* header) {
     }
 }
 
+// i'm loosing my mind
+char* strsep_x(char** stringp, const char* delim) {
+    char* start = *stringp;
+    if (start == NULL) {
+        return NULL;
+    }
+
+    char* end = strstr(start, delim);
+    if (end == NULL) {
+        *stringp = NULL;
+        return start;
+    }
+
+    *end = '\0';
+    *stringp = end + strlen(delim);
+    return start;
+}
+
+char* concat_all(char** lines, size_t lines_count) {
+    size_t size = 0;
+    for (int i = 0; i < lines_count; i++) {
+        size += strlen(lines[i]) + 1;
+    }
+
+    char* str = calloc(size + 1, sizeof(char));
+    for (int i = 0; i < lines_count; i++) {
+        strcat(str, lines[i]);
+        if (i != lines_count - 1) {
+            strcat(str, "\r\n");
+        }
+    }
+
+    return str;
+}
+
 httpc_request_t* httpc_request_from_string(httpc_static_string_t req_static) {
     httpc_request_t* r = calloc(1, sizeof(httpc_request_t));
     r->url = NULL;
     r->method = -1;
     r->headers = NULL;
     r->body = NULL;
+    r->body_size = 0;
 
     char* req = strdup(req_static);
 
     char** lines = malloc(1 * sizeof(char*));
     size_t lines_count = 0;
-    size_t body_line_idx = 0;
+    int body_line_idx = -1;
 
-    char* line = strtok(req, "\r\n");
-    while (line != NULL) {
-        lines[lines_count] = calloc(strlen(line) + 1, sizeof(char));
-        strcpy(lines[lines_count], line);
-        lines_count++;
-        lines = realloc(lines, (lines_count + 1) * sizeof(char*));
-        
-        char* next_line = strtok(NULL, "\r\n");
-        if (next_line == NULL || strlen(next_line) == 0) {
-            body_line_idx = lines_count - 1;
-            break; 
+    char* c = req;
+    while (c) {
+        char* line = strsep_x(&c, "\r\n");
+        if (line == NULL) {
+            break;
         }
 
-        line = next_line;
+        lines[lines_count] = strdup(line);
+        lines_count++;
+
+        lines = realloc(lines, (lines_count + 1) * sizeof(char*));
+
+        if (strlen(line) == 0 && body_line_idx == -1) {
+            body_line_idx = lines_count;
+        }
     }
+
     char* method = strtok(lines[0], " ");
     r->method = httpc_method_from_string(method);
     r->url = strdup(strtok(NULL, " "));
 
-    for (int i = 1; i < lines_count - 1; i++) {
+    for (int i = 1; i < body_line_idx; i++) {
         httpc_header_t* h = httpc_header_from_string(lines[i]);
         if (r->headers == NULL) {
             r->headers = h;
@@ -116,8 +154,13 @@ httpc_request_t* httpc_request_from_string(httpc_static_string_t req_static) {
     }
 
     if (body_line_idx != 0) {
-        r->body = calloc(strlen(lines[body_line_idx]) + 1, sizeof(char));
-        strcpy(r->body, lines[body_line_idx]);
+        if (body_line_idx == lines_count - 1) {
+            r->body = strdup(lines[body_line_idx]);
+            r->body_size = strlen(r->body) + 1;
+        } else {
+            r->body = concat_all(lines + body_line_idx, lines_count - body_line_idx);
+            r->body_size = strlen(r->body) + 1;
+        }
     }
 
     free(req);
@@ -164,20 +207,19 @@ void httpc_response_free(httpc_response_t* res) {
     free(res);
 }
 
-void httpc_response_add_header(httpc_response_t* res, httpc_static_string_t key, httpc_static_string_t value) {
-    if (res->headers != NULL && httpc_get_header_value(res->headers, key) != NULL) {
-        return;
-    }
-
+void httpc_add_header(httpc_header_t** headers, httpc_static_string_t key, httpc_static_string_t value) {
     httpc_header_t* h = httpc_header_new(key, value);
-    if (res->headers == NULL) {
-        res->headers = h;
+    if (*headers == NULL) {
+        *headers = h;
     } else {
-        _httpc_add_header(res->headers, h);
+        if (httpc_get_header_value(*headers, key) != NULL) {
+            return;
+        }
+        _httpc_add_header(*headers, h);
     }
 }
 
-void httpc_response_set_body(httpc_response_t* res, uint8_t* body, size_t body_size) {
+void httpc_response_set_body(httpc_response_t* res, const uint8_t* body, size_t body_size) {
     if (res->body != NULL) {
         free(res->body);
     }
@@ -269,6 +311,7 @@ httpc_string_t httpc_response_to_string(httpc_response_t* res, size_t* out_size)
     }
 
     // add temporary headers: Content-Length
+    // What even is this piece of shit
     char content_length_str[16];
     sprintf(content_length_str, "%ld", res->body_size);
     httpc_header_t* temp = httpc_header_new("Content-Length", content_length_str);

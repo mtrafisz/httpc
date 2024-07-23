@@ -35,11 +35,14 @@ typedef struct _httpc_req_s {
     httpc_method_t method;
     httpc_header_t* headers;
     httpc_string_t body;
+    size_t body_size;
 } httpc_request_t;
 
-// char* httpc_req_to_string(httpc_request_t* req, size_t* out_size); // outside of scope for now
+// char* httpc_request_to_string(httpc_request_t* req, size_t* out_size); // outside of scope for now
+// httpc_request_t* httpc_request_new(httpc_static_string_t url, httpc_method_t method); // outside of scope for now
 httpc_request_t* httpc_request_from_string(httpc_static_string_t req);
 void httpc_request_free(httpc_request_t* req);
+// void httpc_request_set_body(httpc_request_t* req, httpc_static_string_t body, size_t size); // outside of scope for now
 
 typedef struct _httpc_res_s {
     uint16_t status_code;
@@ -54,9 +57,9 @@ httpc_string_t httpc_response_to_string(httpc_response_t* res, size_t* out_size)
 
 httpc_response_t* httpc_response_new(httpc_static_string_t status_text, uint16_t status_code);
 void httpc_response_free(httpc_response_t* res);
+void httpc_response_set_body(httpc_response_t* res, const uint8_t* body, size_t size);
 
-void httpc_response_add_header(httpc_response_t* res, httpc_static_string_t key, httpc_static_string_t value);
+void httpc_add_header(httpc_header_t** headers, httpc_static_string_t key, httpc_static_string_t value);
 char* httpc_get_header_value(httpc_header_t* headers, httpc_static_string_t key);
-void httpc_response_set_body(httpc_response_t* res, uint8_t* body, size_t body_size);
 
 #endif
