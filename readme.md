@@ -28,7 +28,7 @@ target_include_directories(your_exe_or_lib PUBLIC third-party/httpc/include)
 ## Usage
 
 This will change to much for it to make sense to write any documentation.
-Just read the header and tests for now :).
+Just read the header and tests for now :). Good usage available [in this project](https://github.com/mtrafisz/shortener).
 
 Just one other thing - I'm using this library in simple http server, so only functions relevant to this usage are implemented. Other functionality will come in the future.
 
