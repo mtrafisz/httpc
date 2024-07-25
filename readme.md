@@ -9,11 +9,13 @@ For normal usage (see test directory) valgrind doesn't report any memory leaks, 
 ## Building & Including in Your project
 
 For now library consists only of `./source/httpc.c` and `./include/httpc.h`, so You can easily add it to Your project, just by adding httpc.c to your sources list.
+
 ```bash
 $~ gcc your_source.c ... ./httpc/source/httpc.c -Ihttpc/include -o your_exe
 ```
 
 You can also easily add this library to Your project via cmake:
+
 ```cmake
 # ...
 
@@ -35,7 +37,7 @@ Just one other thing - I'm using this library in simple http server, so only fun
 ## Todo
 
 - [ ] use some testing framework
-- [ ] fragment httpc.c to multiple source files
+- [x] fragment httpc.c to multiple source files
 - [ ] add missing request and response methods
-- [ ] modify API for better readability
+- [x] modify API for better readability
 - [ ] cleanup the ugly serialization code

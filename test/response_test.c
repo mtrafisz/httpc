@@ -11,7 +11,7 @@ int main(void) {
                                        "{\"key\": \"value\"}";
 
     httpc_response_t* response = httpc_response_new("OK", 200);
-    httpc_add_header(&response->headers, "Content-Type", "application/json");
+    httpc_add_header_v(&response->headers, "Content-Type", "application/json");
     const char* body = "{\"key\": \"value\"}";
 
     httpc_response_set_body(response, (uint8_t*)body, strlen(body));

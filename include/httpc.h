@@ -2,17 +2,21 @@
 #define _HTTPC_H_
 
 #include <stdint.h>
+#include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef const char* httpc_static_string_t;
 typedef char* httpc_string_t;
 
 typedef enum _htppc_method_e {
     HTTPC_GET,
+    HTTPC_HEAD,
     HTTPC_POST,
     HTTPC_PUT,
     HTTPC_DELETE,
     HTTPC_OPTIONS,
+    HTTPC_PATCH,
 } httpc_method_t;
 
 httpc_method_t httpc_method_from_string(httpc_static_string_t method);
@@ -59,7 +63,8 @@ httpc_response_t* httpc_response_new(httpc_static_string_t status_text, uint16_t
 void httpc_response_free(httpc_response_t* res);
 void httpc_response_set_body(httpc_response_t* res, const uint8_t* body, size_t size);
 
-void httpc_add_header(httpc_header_t** headers, httpc_static_string_t key, httpc_static_string_t value);
+void httpc_add_header_h(httpc_header_t* header_list, httpc_header_t* header);
+void httpc_add_header_v(httpc_header_t** headers, httpc_static_string_t key, httpc_static_string_t value);
 char* httpc_get_header_value(httpc_header_t* headers, httpc_static_string_t key);
 
 #endif
