@@ -13,7 +13,7 @@ target_include_directories(httpc PUBLIC
 )
 
 option (HTTPC_BUILD_TESTS "Build tests" OFF)
-# set(HTTPC_BUILD_TESTS ON CACHE BOOL "Build the tests" FORCE) # to force the option to be on
+set(HTTPC_BUILD_TESTS ON CACHE BOOL "Build the tests" FORCE) # to force the option to be on
 
 if (HTTPC_BUILD_TESTS)
     file (GLOB_RECURSE httpc_TESTS "test/*.c")
@@ -23,6 +23,7 @@ if (HTTPC_BUILD_TESTS)
         add_executable(${test_name} ${test})
         target_include_directories(${test_name} PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/test/include
         )
         target_link_libraries(${test_name} httpc)
         add_test(NAME ${test_name} COMMAND ${test_name})

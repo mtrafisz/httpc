@@ -34,9 +34,13 @@ Just read the header and tests for now :). Good usage available [in this project
 
 Just one other thing - I'm using this library in simple http server, so only functions relevant to this usage are implemented. Other functionality will come in the future.
 
+## 3rd party code
+
+- Testing framework - [acutest](https://github.com/mity/acutest) - see [LICENSE](test/include/LICENSE.md)
+
 ## Todo
 
-- [ ] use some testing framework
+- [x] use some testing framework
 - [x] fragment httpc.c to multiple source files
 - [ ] add missing request and response methods
 - [x] modify API for better readability
