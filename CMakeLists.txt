@@ -13,7 +13,7 @@ target_include_directories(httpc PUBLIC
 )
 
 option (HTTPC_BUILD_TESTS "Build tests" OFF)
-set(HTTPC_BUILD_TESTS ON CACHE BOOL "Build the tests" FORCE) # to force the option to be on
+# set(HTTPC_BUILD_TESTS ON CACHE BOOL "Build the tests" FORCE) # to force the option to be on
 
 if (HTTPC_BUILD_TESTS)
     file (GLOB_RECURSE httpc_TESTS "test/*.c")
