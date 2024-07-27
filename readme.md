@@ -8,13 +8,7 @@ For normal usage (see test directory) valgrind doesn't report any memory leaks, 
 
 ## Building & Including in Your project
 
-For now library consists only of `./source/httpc.c` and `./include/httpc.h`, so You can easily add it to Your project, just by adding httpc.c to your sources list.
-
-```bash
-$~ gcc your_source.c ... ./httpc/source/httpc.c -Ihttpc/include -o your_exe
-```
-
-You can also easily add this library to Your project via cmake:
+Intended building process and usage is just by using cmake:
 
 ```cmake
 # ...
