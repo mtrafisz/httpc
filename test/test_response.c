@@ -10,8 +10,31 @@ const char* sample_response_string = "HTTP/1.1 200 OK\r\n"
     "{\r\n\t\"key\": \"value\"\n}\r\n";
 
 void test_httpc_response_parsing(void) {
-    TEST_ASSERT(false);
-    TEST_MSG("Not implemented");
+    httpc_response_t* response = httpc_response_from_string(sample_response_string, strlen(sample_response_string));
+    TEST_ASSERT(response != NULL);
+
+    TEST_CHECK(response->status_code == 200);
+    TEST_CHECK(strcmp(response->status_text, "OK") == 0);
+
+    httpc_header_t* h = response->headers;
+    TEST_ASSERT(h != NULL);
+    TEST_CHECK(strcmp(h->key, "Host") == 0);
+    TEST_CHECK(strcmp(h->value, "example.com") == 0);
+
+    h = h->next;
+    TEST_ASSERT(h != NULL);
+    TEST_CHECK(strcmp(h->key, "Content-Type") == 0);
+    TEST_CHECK(strcmp(h->value, "application/json") == 0);
+
+    h = h->next;
+    TEST_ASSERT(h != NULL);
+    TEST_CHECK(strcmp(h->key, "Content-Length") == 0);
+    TEST_CHECK(strcmp(h->value, "22") == 0);
+
+    TEST_CHECK(response->body_size == 22);
+    TEST_CHECK(memcmp(response->body, "{\r\n\t\"key\": \"value\"\n}\r\n", 22) == 0);
+
+    httpc_response_free(response);
 }
 
 void test_httpc_response_serialization(void) {
@@ -29,11 +52,13 @@ void test_httpc_response_serialization(void) {
     char* response_str = httpc_response_to_string(response, &out_size);
     TEST_ASSERT(response_str != NULL);
 
-    TEST_CHECK(strcmp(response_str, sample_response_string) == 0);
+    TEST_CHECK(strncmp(response_str, sample_response_string, out_size) == 0);
     TEST_DUMP("Expected:", sample_response_string, strlen(sample_response_string));
-    TEST_DUMP("Actual:", response_str, strlen(response_str));
+    TEST_DUMP("Actual:", response_str, out_size);
 
     free(response_str);
+
+    httpc_response_free(response);
 }
 
 TEST_LIST = {

@@ -55,3 +55,20 @@ char* byte_array_collect(byte_array_t* ba) {
 void byte_array_append_str(byte_array_t* ba, const char* str) {
     byte_array_append_bytes(ba, str, strlen(str));
 }
+
+char* strsep_x(char** stringp, const char* delim) {
+    char* start = *stringp;
+    if (start == NULL) {
+        return NULL;
+    }
+
+    char* end = strstr(start, delim);
+    if (end == NULL) {
+        *stringp = NULL;
+        return start;
+    }
+
+    *end = '\0';
+    *stringp = end + strlen(delim);
+    return start;
+}

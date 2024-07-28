@@ -36,6 +36,7 @@ Just one other thing - I'm using this library in simple http server, so only fun
 
 - [x] use some testing framework
 - [x] fragment httpc.c to multiple source files
-- [ ] add missing request and response methods
+- [x] add missing request and response methods
 - [x] modify API for better readability
-- [ ] cleanup the ugly serialization code
+- [x] cleanup the ugly serialization code
+- [ ] review security and memory efficiency

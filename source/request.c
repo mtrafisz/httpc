@@ -22,24 +22,6 @@ void httpc_request_set_body(httpc_request_t* req, httpc_static_string_t body, si
     req->body_size = size + 1;
 }
 
-// i'm loosing my mind
-char* strsep_x(char** stringp, const char* delim) {
-    char* start = *stringp;
-    if (start == NULL) {
-        return NULL;
-    }
-
-    char* end = strstr(start, delim);
-    if (end == NULL) {
-        *stringp = NULL;
-        return start;
-    }
-
-    *end = '\0';
-    *stringp = end + strlen(delim);
-    return start;
-}
-
 httpc_request_t* httpc_request_from_string(httpc_static_string_t req_static, size_t size) {
     httpc_request_t* r = malloc(sizeof(httpc_request_t));
     r->url = NULL;
@@ -97,7 +79,10 @@ httpc_request_t* httpc_request_from_string(httpc_static_string_t req_static, siz
     size_t body_size = size - lines_len;
     if (httpc_get_header_value(r->headers, "Content-Length") != NULL) { // is it even possible?
         // todo: use something safer than atoi
-        body_size = atoi(httpc_get_header_value(r->headers, "Content-Length"));
+        size_t body_size_h = atoi(httpc_get_header_value(r->headers, "Content-Length"));
+        if (body_size > body_size_h) {
+            body_size = body_size_h;
+        }
     }
 
     r->body = malloc(body_size + 1);

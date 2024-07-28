@@ -19,4 +19,6 @@ void byte_array_append_str(byte_array_t* ba, const char* str);
 
 char* byte_array_collect(byte_array_t* ba);
 
+char* strsep_x(char** stringp, const char* delim);
+
 #endif

@@ -50,14 +50,14 @@ void httpc_request_set_body(httpc_request_t* req, httpc_static_string_t body, si
 
 typedef struct _httpc_res_s {
     uint16_t status_code;
-    httpc_static_string_t status_text;
+    httpc_string_t status_text;
     httpc_header_t* headers;
     httpc_string_t body;
     size_t body_size;
 } httpc_response_t;
 
 httpc_string_t httpc_response_to_string(httpc_response_t* res, size_t* out_size);
-// httpc_response_t* httpc_response_from_string(const char* buffer);
+httpc_response_t* httpc_response_from_string(httpc_static_string_t res, size_t size);
 
 httpc_response_t* httpc_response_new(httpc_static_string_t status_text, uint16_t status_code);
 void httpc_response_free(httpc_response_t* res);
