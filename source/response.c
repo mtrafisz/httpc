@@ -1,7 +1,7 @@
 #include <httpc.h>
 #include <ba.h>
 
-httpc_response_t* httpc_response_new(httpc_static_string_t status_text, uint16_t status_code) {
+httpc_response_t* httpc_response_new(const char* status_text, uint16_t status_code) {
     httpc_response_t* r = calloc(1, sizeof(httpc_response_t));
     r->status_code = status_code;
     r->status_text = strdup(status_text);
@@ -39,7 +39,7 @@ void httpc_response_set_body(httpc_response_t* res, const uint8_t* body, size_t 
     res->body_size = body_size;
 }
 
-httpc_string_t httpc_response_to_string(httpc_response_t* res, size_t* out_size) {
+char* httpc_response_to_string(httpc_response_t* res, size_t* out_size) {
     byte_array_t* ba = byte_array_new(1024);
 
     byte_array_append_str(ba, "HTTP/1.1 ");
@@ -91,7 +91,7 @@ httpc_string_t httpc_response_to_string(httpc_response_t* res, size_t* out_size)
     return str;
 }
 
-httpc_response_t* httpc_response_from_string(httpc_static_string_t res_static, size_t size) {
+httpc_response_t* httpc_response_from_string(const uint8_t* res_static, size_t size) {
     httpc_response_t* r = malloc(sizeof(httpc_response_t));
     r->headers = NULL;
     r->body = NULL;

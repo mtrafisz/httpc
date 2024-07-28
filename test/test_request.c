@@ -84,6 +84,9 @@ void test_httpc_request_serialization(void) {
     TEST_CHECK(strcmp(serialized, sample_request_string) == 0);
     TEST_DUMP("Expected:", sample_request_string, strlen(sample_request_string));
     TEST_DUMP("Actual:", serialized, size);
+    TEST_CHECK(size == strlen(sample_request_string));
+    TEST_MSG("Size: %zu", size);
+    TEST_MSG("Expected size: %zu", strlen(sample_request_string));
 
     free(serialized);
     httpc_request_free(req);

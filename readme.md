@@ -40,5 +40,6 @@ All basic functionality implemented.
 - [x] add missing request and response methods
 - [x] modify API for better readability
 - [x] cleanup the ugly serialization code
-- [ ] review security and memory efficiency
-- [ ] add proper comments and documentation
+- [ ] add proper errors
+- [ ] review security and memory efficiency, eliminate all errors from valgrind
+- [ ] ~~add proper comments and documentation~~ Complete doxygen documentation

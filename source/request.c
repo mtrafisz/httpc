@@ -1,7 +1,7 @@
 #include <httpc.h>
 #include <ba.h>
 
-httpc_request_t* httpc_request_new(httpc_static_string_t url, httpc_method_t method) {
+httpc_request_t* httpc_request_new(const char* url, httpc_method_t method) {
     httpc_request_t* r = malloc(sizeof(httpc_request_t));
     r->url = strdup(url);
     r->method = method;
@@ -11,7 +11,7 @@ httpc_request_t* httpc_request_new(httpc_static_string_t url, httpc_method_t met
     return r;
 }
 
-void httpc_request_set_body(httpc_request_t* req, httpc_static_string_t body, size_t size) {
+void httpc_request_set_body(httpc_request_t* req, const uint8_t* body, size_t size) {
     if (req->body != NULL) {
         free(req->body);
     }
@@ -22,7 +22,7 @@ void httpc_request_set_body(httpc_request_t* req, httpc_static_string_t body, si
     req->body_size = size + 1;
 }
 
-httpc_request_t* httpc_request_from_string(httpc_static_string_t req_static, size_t size) {
+httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t size) {
     httpc_request_t* r = malloc(sizeof(httpc_request_t));
     r->url = NULL;
     r->method = -1;
@@ -117,6 +117,7 @@ char* httpc_request_to_string(httpc_request_t* req, size_t* out_size) {
         sprintf(content_length_str, "%ld", req->body_size - 1);
         httpc_header_t* temp = httpc_header_new("Content-Length", content_length_str);
         char* header_string = httpc_header_to_string(temp);
+        httpc_header_free(temp);
         byte_array_append_str(ba, header_string);
         free(header_string);
         byte_array_append_str(ba, "\r\n");
