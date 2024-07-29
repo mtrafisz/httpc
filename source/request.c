@@ -30,7 +30,7 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t siz
     r->body = NULL;
     r->body_size = 0;
 
-    char* req = strndup(req_static, size);
+    char* req = strndup((char*)req_static, size);
 
     char** lines = malloc(1 * sizeof(char*));
     size_t lines_count = 0;
@@ -61,7 +61,7 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t siz
     char* method = strtok(lines[0], " ");
     r->method = httpc_method_from_string(method);
     r->url = strdup(strtok(NULL, " "));
-    for (int i = 1; i < lines_count; i++) {
+    for (size_t i = 1; i < lines_count; i++) {
         httpc_header_t* h = httpc_header_from_string(lines[i]);
         if (r->headers == NULL) {
             r->headers = h;
@@ -70,14 +70,14 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t siz
         }
     }
 
-    for (int i = 0; i < lines_count; i++) {
+    for (size_t i = 0; i < lines_count; i++) {
         free(lines[i]);
     }
     free(lines);
 
     // c should now point to the body
     size_t body_size = size - lines_len;
-    if (httpc_get_header_value(r->headers, "Content-Length") != NULL) { // is it even possible?
+    if (httpc_get_header_value(r->headers, "Content-Length") != NULL) {
         // todo: use something safer than atoi
         size_t body_size_h = atoi(httpc_get_header_value(r->headers, "Content-Length"));
         if (body_size > body_size_h) {

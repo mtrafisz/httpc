@@ -97,7 +97,7 @@ httpc_response_t* httpc_response_from_string(const uint8_t* res_static, size_t s
     r->body = NULL;
     r->body_size = 0;
 
-    char* res = strndup(res_static, size);
+    char* res = strndup((char*)res_static, size);
 
     char** lines = malloc(sizeof(char*));
     size_t lines_count = 0;
@@ -128,7 +128,7 @@ httpc_response_t* httpc_response_from_string(const uint8_t* res_static, size_t s
     char* status_code_str = strtok(NULL, " ");
     r->status_code = atoi(status_code_str); // todo: use something safer than atoi
     r->status_text = strdup(strtok(NULL, ""));
-    for (int i = 1; i < lines_count; i++) {
+    for (size_t i = 1; i < lines_count; i++) {
         httpc_header_t* h = httpc_header_from_string(lines[i]);
         if (r->headers == NULL) {
             r->headers = h;
@@ -137,7 +137,7 @@ httpc_response_t* httpc_response_from_string(const uint8_t* res_static, size_t s
         }
     }
 
-    for (int i = 0; i < lines_count; i++) {
+    for (size_t i = 0; i < lines_count; i++) {
         free(lines[i]);
     }
     free(lines);

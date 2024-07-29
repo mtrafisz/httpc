@@ -18,7 +18,7 @@ const char* binary_request_string = "POST /api/example HTTP/1.1\r\n"
 #define binary_request_string_size 126
 
 void test_httpc_request_parsing(void) {
-    httpc_request_t* req = httpc_request_from_string(sample_request_string, strlen(sample_request_string));
+    httpc_request_t* req = httpc_request_from_string((uint8_t*)sample_request_string, strlen(sample_request_string));
     TEST_ASSERT(req != NULL);
 
     TEST_CHECK(req->method == HTTPC_POST);
@@ -51,7 +51,7 @@ void test_httpc_request_parsing(void) {
 }
 
 void test_httpc_request_parsing_binary(void) {
-    httpc_request_t* req = httpc_request_from_string(binary_request_string, binary_request_string_size);
+    httpc_request_t* req = httpc_request_from_string((uint8_t*)binary_request_string, binary_request_string_size);
     TEST_ASSERT(req != NULL);
 
     TEST_CHECK(req->method == HTTPC_POST);
@@ -75,7 +75,7 @@ void test_httpc_request_serialization(void) {
     httpc_request_t* req = httpc_request_new("/api/example", HTTPC_POST);
     httpc_add_header_v(&req->headers, "Host", "example.com");
     httpc_add_header_v(&req->headers, "Content-Type", "application/json");
-    httpc_request_set_body(req, "{\r\n\t\"key\": \"value\"\n}\r\n", 22);
+    httpc_request_set_body(req, (uint8_t*)"{\r\n\t\"key\": \"value\"\n}\r\n", 22);
 
     size_t size;
     char* serialized = httpc_request_to_string(req, &size);
