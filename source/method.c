@@ -1,6 +1,6 @@
 #include <httpc.h>
 
-httpc_method_t httpc_method_from_string(const char* method) {
+HttpcMethodType httpc_method_from_string(const char* method) {
     if (strcmp(method, "GET") == 0) {
         return HTTPC_GET;
     } else if (strcmp(method, "HEAD") == 0) {
@@ -20,7 +20,7 @@ httpc_method_t httpc_method_from_string(const char* method) {
     }
 }
 
-const char* httpc_method_to_string(httpc_method_t method) {
+const char* httpc_method_to_string(HttpcMethodType method) {
     if (method < HTTPC_GET || method > HTTPC_PATCH) {
         return NULL;
     }

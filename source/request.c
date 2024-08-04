@@ -1,8 +1,8 @@
 #include <httpc.h>
-#include <ba.h>
+#include <internal_ba.h>
 
-httpc_request_t* httpc_request_new(const char* url, httpc_method_t method) {
-    httpc_request_t* r = malloc(sizeof(httpc_request_t));
+HttpcRequest* httpc_request_new(const char* url, HttpcMethodType method) {
+    HttpcRequest* r = malloc(sizeof(HttpcRequest));
     r->url = strdup(url);
     r->method = method;
     r->headers = NULL;
@@ -11,7 +11,7 @@ httpc_request_t* httpc_request_new(const char* url, httpc_method_t method) {
     return r;
 }
 
-void httpc_request_set_body(httpc_request_t* req, const uint8_t* body, size_t size) {
+void httpc_request_set_body(HttpcRequest* req, const uint8_t* body, size_t size) {
     if (req->body != NULL) {
         free(req->body);
     }
@@ -22,8 +22,8 @@ void httpc_request_set_body(httpc_request_t* req, const uint8_t* body, size_t si
     req->body_size = size + 1;
 }
 
-httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t size) {
-    httpc_request_t* r = malloc(sizeof(httpc_request_t));
+HttpcRequest* httpc_request_from_string(const uint8_t* req_static, size_t size) {
+    HttpcRequest* r = malloc(sizeof(HttpcRequest));
     r->url = NULL;
     r->method = -1;
     r->headers = NULL;
@@ -62,7 +62,7 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t siz
     r->method = httpc_method_from_string(method);
     r->url = strdup(strtok(NULL, " "));
     for (size_t i = 1; i < lines_count; i++) {
-        httpc_header_t* h = httpc_header_from_string(lines[i]);
+        HttpcHeader* h = httpc_header_from_string(lines[i]);
         if (r->headers == NULL) {
             r->headers = h;
         } else {
@@ -95,7 +95,7 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req_static, size_t siz
     return r;
 }
 
-char* httpc_request_to_string(httpc_request_t* req, size_t* out_size) {
+char* httpc_request_to_string(HttpcRequest* req, size_t* out_size) {
     byte_array_t* ba = byte_array_new(1024);
 
     byte_array_append_str(ba, httpc_method_to_string(req->method));
@@ -103,7 +103,7 @@ char* httpc_request_to_string(httpc_request_t* req, size_t* out_size) {
     byte_array_append_str(ba, req->url);
     byte_array_append_str(ba, " HTTP/1.1\r\n");
 
-    httpc_header_t* h = req->headers;
+    HttpcHeader* h = req->headers;
     while (h != NULL) {
         char* header_string = httpc_header_to_string(h);
         byte_array_append_str(ba, header_string);
@@ -115,7 +115,7 @@ char* httpc_request_to_string(httpc_request_t* req, size_t* out_size) {
     if (req->body != NULL) {
         char content_length_str[16];
         sprintf(content_length_str, "%ld", req->body_size - 1);
-        httpc_header_t* temp = httpc_header_new("Content-Length", content_length_str);
+        HttpcHeader* temp = httpc_header_new("Content-Length", content_length_str);
         char* header_string = httpc_header_to_string(temp);
         httpc_header_free(temp);
         byte_array_append_str(ba, header_string);
@@ -139,7 +139,7 @@ char* httpc_request_to_string(httpc_request_t* req, size_t* out_size) {
     return out;
 }
 
-void httpc_request_free(httpc_request_t* req) {
+void httpc_request_free(HttpcRequest* req) {
     if (req->headers != NULL) {
         httpc_header_free(req->headers);
     }

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 void test_httpc_header_new(void) {
-    httpc_header_t *header = httpc_header_new("Content-Type", "application/json");
+    HttpcHeader *header = httpc_header_new("Content-Type", "application/json");
     TEST_ASSERT(header != NULL);
 
     bool key_eq = strcmp(header->key, "Content-Type") == 0;
@@ -27,7 +27,7 @@ void test_httpc_header_new(void) {
 }
 
 void test_httpc_header_from_string(void) {
-    httpc_header_t *header = httpc_header_from_string("Content-Type: application/json");
+    HttpcHeader *header = httpc_header_from_string("Content-Type: application/json");
     TEST_ASSERT(header != NULL);
 
     TEST_CHECK(strcmp(header->key, "Content-Type") == 0);
@@ -44,7 +44,7 @@ void test_httpc_header_from_string(void) {
 }
 
 void test_httpc_header_set_get(void) {
-    httpc_header_t *header = httpc_header_new("Content-Type", "application/json");
+    HttpcHeader *header = httpc_header_new("Content-Type", "application/json");
     TEST_ASSERT(header != NULL);
 
     httpc_add_header_v(&header, "Host", "example.com");

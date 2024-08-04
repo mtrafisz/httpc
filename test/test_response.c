@@ -19,13 +19,13 @@ const char* sample_response_string_bin = "HTTP/1.1 200 OK\r\n"  // 17
 #define sample_response_string_bin_size 105
 
 void test_httpc_response_parsing(void) {
-    httpc_response_t* response = httpc_response_from_string((uint8_t*)sample_response_string, strlen(sample_response_string));
+    HttpcResponse* response = httpc_response_from_string((uint8_t*)sample_response_string, strlen(sample_response_string));
     TEST_ASSERT(response != NULL);
 
     TEST_CHECK(response->status_code == 200);
     TEST_CHECK(strcmp(response->status_text, "OK") == 0);
 
-    httpc_header_t* h = response->headers;
+    HttpcHeader* h = response->headers;
     TEST_ASSERT(h != NULL);
     TEST_CHECK(strcmp(h->key, "Host") == 0);
     TEST_CHECK(strcmp(h->value, "example.com") == 0);
@@ -47,7 +47,7 @@ void test_httpc_response_parsing(void) {
 }
 
 void test_httpc_response_serialization(void) {
-    httpc_response_t* response = httpc_response_new("OK", 200);
+    HttpcResponse* response = httpc_response_new("OK", 200);
     TEST_ASSERT(response != NULL);
 
     httpc_add_header_v(&response->headers, "Host", "example.com");
@@ -73,20 +73,20 @@ void test_httpc_response_serialization(void) {
 // Valgrind will complain about invalid reads of size 1, but I think it's because input is not
 // null-terminated, nor is it terminated by \r\n. At least it's not segfaulting...
 void test_httpc_response_invalid_input(void) {
-    httpc_response_t* response = httpc_response_from_string((uint8_t*)sample_response_string, 5);
+    HttpcResponse* response = httpc_response_from_string((uint8_t*)sample_response_string, 5);
     TEST_CHECK(response == NULL);
     TEST_CHECK(errno == EINVAL);
     TEST_MSG("Error: %s", strerror(errno));
 }
 
 void test_httpc_response_parse_binary(void) {
-    httpc_response_t* response = httpc_response_from_string((uint8_t*)sample_response_string_bin, sample_response_string_bin_size);
+    HttpcResponse* response = httpc_response_from_string((uint8_t*)sample_response_string_bin, sample_response_string_bin_size);
     TEST_ASSERT(response != NULL);
 
     TEST_CHECK(response->status_code == 200);
     TEST_CHECK(strcmp(response->status_text, "OK") == 0);
 
-    httpc_header_t* h = response->headers;
+    HttpcHeader* h = response->headers;
     TEST_ASSERT(h != NULL);
     TEST_CHECK(strcmp(h->key, "Host") == 0);
     TEST_CHECK(strcmp(h->value, "example.com") == 0);

@@ -24,7 +24,7 @@ typedef enum _htppc_method_e {
     HTTPC_DELETE,
     HTTPC_OPTIONS,
     HTTPC_PATCH,
-} httpc_method_t;
+} HttpcMethodType;
 
 /**
  * @brief Convert a string to a HTTP method
@@ -34,7 +34,7 @@ typedef enum _htppc_method_e {
  * @param method The string to convert
  * @return The HTTP method
  */
-httpc_method_t httpc_method_from_string(const char* method);
+HttpcMethodType httpc_method_from_string(const char* method);
 
 /**
  * @brief Convert a HTTP method to a string
@@ -44,7 +44,7 @@ httpc_method_t httpc_method_from_string(const char* method);
  * @param method The HTTP method to convert
  * @return The string representation of the HTTP method
  */
-const char* httpc_method_to_string(httpc_method_t method);
+const char* httpc_method_to_string(HttpcMethodType method);
 
 /**
  * @brief Struct for a HTTP header
@@ -55,7 +55,7 @@ typedef struct _httpc_header_s {
     char* key;
     char* value;
     struct _httpc_header_s* next;
-} httpc_header_t;
+} HttpcHeader;
 
 /**
  * @brief Create a new HTTP header
@@ -69,7 +69,7 @@ typedef struct _httpc_header_s {
  * @param value The value of the header
  * @return The new HTTP header
  */
-httpc_header_t* httpc_header_new(const char* key, const char* value);
+HttpcHeader* httpc_header_new(const char* key, const char* value);
 
 /**
  * @brief Free a HTTP header
@@ -78,7 +78,7 @@ httpc_header_t* httpc_header_new(const char* key, const char* value);
  * 
  * @param header The header to free
  */
-void httpc_header_free(httpc_header_t* header);
+void httpc_header_free(HttpcHeader* header);
 
 /**
  * @brief Convert a HTTP header to a string
@@ -89,7 +89,7 @@ void httpc_header_free(httpc_header_t* header);
  * @param header The header to convert
  * @return The string representation of the header
  */
-char* httpc_header_to_string(httpc_header_t* header);
+char* httpc_header_to_string(HttpcHeader* header);
 
 /**
  * @brief Convert a string to a HTTP header
@@ -100,7 +100,7 @@ char* httpc_header_to_string(httpc_header_t* header);
  * @param header The string to convert
  * @return The HTTP header
  */
-httpc_header_t* httpc_header_from_string(const char* header);
+HttpcHeader* httpc_header_from_string(const char* header);
 
 /**
  * @brief Add a header to a header list
@@ -112,7 +112,7 @@ httpc_header_t* httpc_header_from_string(const char* header);
  * @param header_list The header list to add the header to
  * @param header The header to add
  */
-void httpc_add_header_h(httpc_header_t* header_list, httpc_header_t* header);
+void httpc_add_header_h(HttpcHeader* header_list, HttpcHeader* header);
 
 /**
  * @brief Add a header to a header list
@@ -123,7 +123,7 @@ void httpc_add_header_h(httpc_header_t* header_list, httpc_header_t* header);
  * @param key The key of the header
  * @param value The value of the header
  */
-void httpc_add_header_v(httpc_header_t** headers, const char* key, const char* value);
+void httpc_add_header_v(HttpcHeader** headers, const char* key, const char* value);
 
 /**
  * @brief Get the value of a header
@@ -135,7 +135,7 @@ void httpc_add_header_v(httpc_header_t** headers, const char* key, const char* v
  * @param key The key of the header to search for
  * @return The value of the header or NULL if not found
  */
-char* httpc_get_header_value(httpc_header_t* headers, const char* key);
+char* httpc_get_header_value(HttpcHeader* headers, const char* key);
 
 /**
  * @brief Struct for a HTTP request
@@ -144,11 +144,11 @@ char* httpc_get_header_value(httpc_header_t* headers, const char* key);
  */
 typedef struct _httpc_req_s {
     char* url;
-    httpc_method_t method;
-    httpc_header_t* headers;
+    HttpcMethodType method;
+    HttpcHeader* headers;
     char* body;
     size_t body_size;
-} httpc_request_t;
+} HttpcRequest;
 
 /**
  * @brief Convert a HTTP request to a string
@@ -161,7 +161,7 @@ typedef struct _httpc_req_s {
  * @param out_size The size of the resulting string, can be set to `NULL` to ignore.
  * @return The string representation of the request
  */
-char* httpc_request_to_string(httpc_request_t* req, size_t* out_size);
+char* httpc_request_to_string(HttpcRequest* req, size_t* out_size);
 
 /**
  * @brief Create a new HTTP request
@@ -173,7 +173,7 @@ char* httpc_request_to_string(httpc_request_t* req, size_t* out_size);
  * @param method The HTTP method of the request
  * @return The new HTTP request
  */
-httpc_request_t* httpc_request_new(const char* url, httpc_method_t method);
+HttpcRequest* httpc_request_new(const char* url, HttpcMethodType method);
 
 /**
  * @brief Parse a string to a HTTP request
@@ -185,7 +185,7 @@ httpc_request_t* httpc_request_new(const char* url, httpc_method_t method);
  * @param size The size of the string
  * @return The HTTP request or NULL if parsing failed
  */
-httpc_request_t* httpc_request_from_string(const uint8_t* req, size_t size);
+HttpcRequest* httpc_request_from_string(const uint8_t* req, size_t size);
 
 /**
  * @brief Free a HTTP request
@@ -194,7 +194,7 @@ httpc_request_t* httpc_request_from_string(const uint8_t* req, size_t size);
  * 
  * @param req The request to free
  */
-void httpc_request_free(httpc_request_t* req);
+void httpc_request_free(HttpcRequest* req);
 
 /**
  * @brief Set the body of a HTTP request
@@ -207,7 +207,7 @@ void httpc_request_free(httpc_request_t* req);
  * 
  * @warning OLD BODY WILL BE FREED.
  */
-void httpc_request_set_body(httpc_request_t* req, const uint8_t* body, size_t size);
+void httpc_request_set_body(HttpcRequest* req, const uint8_t* body, size_t size);
 
 /**
  * @brief Struct for a HTTP response
@@ -217,10 +217,10 @@ void httpc_request_set_body(httpc_request_t* req, const uint8_t* body, size_t si
 typedef struct _httpc_res_s {
     uint16_t status_code;
     char* status_text;
-    httpc_header_t* headers;
+    HttpcHeader* headers;
     char* body;
     size_t body_size;           
-} httpc_response_t;
+} HttpcResponse;
 
 /**
  * @brief Convert a HTTP response to a string
@@ -232,7 +232,7 @@ typedef struct _httpc_res_s {
  * @param out_size The size of the resulting string, can be set to `NULL` to ignore.
  * @return The string representation of the response
  */
-char* httpc_response_to_string(httpc_response_t* res, size_t* out_size);
+char* httpc_response_to_string(HttpcResponse* res, size_t* out_size);
 
 /**
  * @brief Parse a string to a HTTP response
@@ -244,7 +244,7 @@ char* httpc_response_to_string(httpc_response_t* res, size_t* out_size);
  * @param size The size of the string
  * @return The HTTP response or NULL if parsing failed
  */
-httpc_response_t* httpc_response_from_string(const uint8_t* res, size_t size);
+HttpcResponse* httpc_response_from_string(const uint8_t* res, size_t size);
 
 /**
  * @brief Create a new HTTP response
@@ -256,7 +256,7 @@ httpc_response_t* httpc_response_from_string(const uint8_t* res, size_t size);
  * @param status_code The status code of the response
  * @return The new HTTP response
  */
-httpc_response_t* httpc_response_new(const char* status_text, uint16_t status_code);
+HttpcResponse* httpc_response_new(const char* status_text, uint16_t status_code);
 
 /**
  * @brief Free a HTTP response
@@ -265,7 +265,7 @@ httpc_response_t* httpc_response_new(const char* status_text, uint16_t status_co
  * 
  * @param res The response to free
  */
-void httpc_response_free(httpc_response_t* res);
+void httpc_response_free(HttpcResponse* res);
 
 /**
  * @brief Set the body of a HTTP response
@@ -278,6 +278,6 @@ void httpc_response_free(httpc_response_t* res);
  * 
  * @warning OLD BODY WILL BE FREED.
  */
-void httpc_response_set_body(httpc_response_t* res, const uint8_t* body, size_t size);
+void httpc_response_set_body(HttpcResponse* res, const uint8_t* body, size_t size);
 
 #endif

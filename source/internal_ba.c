@@ -1,4 +1,4 @@
-#include <ba.h>
+#include <internal_ba.h>
 
 #include <string.h>
 #include <stdlib.h>
