@@ -1,5 +1,8 @@
 #include <httpc.h>
 
+#include <stdarg.h>
+#include <stdio.h>
+
 HttpcHeader* httpc_header_new(const char* key, const char* value) {
     if (key == NULL || value == NULL) {
         return NULL;
@@ -63,6 +66,18 @@ void httpc_add_header_v(HttpcHeader** headers, const char* key, const char* valu
         }
         httpc_add_header_h(*headers, h);
     }
+}
+
+void httpc_add_header_f(HttpcHeader** headers, const char* key, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    char* value = malloc(1024);
+    vsnprintf(value, 1024, format, args);
+
+    va_end(args);
+    httpc_add_header_v(headers, key, value);
+    free(value);
 }
 
 char* httpc_get_header_value(HttpcHeader* headers, const char* key) {

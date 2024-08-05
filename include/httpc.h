@@ -127,6 +127,18 @@ void httpc_add_header_h(HttpcHeader* header_list, HttpcHeader* header);
 void httpc_add_header_v(HttpcHeader** headers, const char* key, const char* value);
 
 /**
+ * @brief Add a header to a header list
+ * 
+ * This function adds a header to a header list. Value is formatted using `vsnprintf`.
+ * 
+ * @param headers The header list to add the header to
+ * @param key The key of the header
+ * @param format The format string of the value
+ * @param ... The arguments for the format string
+ */
+void httpc_add_header_f(HttpcHeader** headers, const char* key, const char* format, ...);
+
+/**
  * @brief Get the value of a header
  * 
  * This function gets the value of a header from a header list.
