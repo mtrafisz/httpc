@@ -113,7 +113,7 @@ HttpcHeader* httpc_header_from_string(const char* header);
  * @param header_list The header list to add the header to
  * @param header The header to add
  */
-void httpc_add_header_h(HttpcHeader* header_list, HttpcHeader* header);
+void httpc_add_header_h(HttpcHeader** header_list, HttpcHeader* header);
 
 /**
  * @brief Add a header to a header list

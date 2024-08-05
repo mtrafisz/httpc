@@ -18,6 +18,32 @@ const char* sample_response_string_bin = "HTTP/1.1 200 OK\r\n"  // 17
     "\0\1\2\3\4\5\6\7";                                         // 8
 #define sample_response_string_bin_size 105
 
+void test_httpc_response_headers(void) {
+    HttpcResponse* res = httpc_response_new("OK", 200);
+    TEST_ASSERT(res != NULL);
+
+    httpc_add_header_h(&res->headers, httpc_header_new("Host", "example.com"));
+    httpc_add_header_v(&res->headers, "Content-Type", "application/json");
+    httpc_add_header_f(&res->headers, "Content-Length", "%d", 22);
+
+    TEST_CHECK(res->status_code == 200);
+    TEST_CHECK(strcmp(res->status_text, "OK") == 0);
+
+    TEST_CHECK(strcmp(httpc_get_header_value(res->headers, "Host"), "example.com") == 0);
+    TEST_MSG("Expected: example.com");
+    TEST_MSG("Actual: %s", httpc_get_header_value(res->headers, "Host"));
+
+    TEST_CHECK(strcmp(httpc_get_header_value(res->headers, "Content-Type"), "application/json") == 0);
+    TEST_MSG("Expected: application/json");
+    TEST_MSG("Actual: %s", httpc_get_header_value(res->headers, "Content-Type"));
+
+    TEST_CHECK(strcmp(httpc_get_header_value(res->headers, "Content-Length"), "22") == 0);
+    TEST_MSG("Expected: 22");
+    TEST_MSG("Actual: %s", httpc_get_header_value(res->headers, "Content-Length"));
+
+    httpc_response_free(res);
+}
+
 void test_httpc_response_parsing(void) {
     HttpcResponse* response = httpc_response_from_string((uint8_t*)sample_response_string, strlen(sample_response_string));
     TEST_ASSERT(response != NULL);
@@ -112,6 +138,7 @@ void test_httpc_response_parse_binary(void) {
 }
 
 TEST_LIST = {
+    { "httpc_response_headers", test_httpc_response_headers },
     { "httpc_response_parsing", test_httpc_response_parsing },
     { "httpc_response_serialization", test_httpc_response_serialization },
     { "httpc_response_invalid_input", test_httpc_response_invalid_input },

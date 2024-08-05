@@ -48,7 +48,7 @@ void test_httpc_header_set_get(void) {
     TEST_ASSERT(header != NULL);
 
     httpc_add_header_v(&header, "Host", "example.com");
-    httpc_add_header_h(header, httpc_header_from_string("Accept: application/json"));
+    httpc_add_header_h(&header, httpc_header_from_string("Accept: application/json"));
     httpc_add_header_f(&header, "Content-Length", "%d", 1024);
 
     TEST_CHECK(strcmp(httpc_get_header_value(header, "Content-Type"), "application/json") == 0);

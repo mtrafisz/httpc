@@ -159,7 +159,7 @@ HttpcResponse* httpc_response_from_string(const uint8_t* res_static, size_t size
         if (r->headers == NULL) {
             r->headers = h;
         } else {
-            httpc_add_header_h(r->headers, h);
+            httpc_add_header_h(&r->headers, h);
         }
     }
 

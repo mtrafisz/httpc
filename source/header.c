@@ -48,23 +48,35 @@ void httpc_header_free(HttpcHeader* header) {
     free(header);
 }
 
-void httpc_add_header_h(HttpcHeader* header_list, HttpcHeader* header) {
-    if (header_list->next == NULL) {
-        header_list->next = header;
+void httpc_add_header_h(HttpcHeader** header_list, HttpcHeader* header) {
+    if (header_list == NULL) {
+        return;
+    }
+
+    if (*header_list == NULL) {
+        *header_list = header;
     } else {
-        httpc_add_header_h(header_list->next, header);
+        HttpcHeader* h = *header_list;
+        while (h->next != NULL) {
+            h = h->next;
+        }
+        h->next = header;
     }
 }
 
 void httpc_add_header_v(HttpcHeader** headers, const char* key, const char* value) {
-    HttpcHeader* h = httpc_header_new(key, value);
+    if (key == NULL || value == NULL || headers == NULL) {
+        return;
+    }
+
     if (*headers == NULL) {
-        *headers = h;
+        *headers = httpc_header_new(key, value);
     } else {
         if (httpc_get_header_value(*headers, key) != NULL) {
             return;
         }
-        httpc_add_header_h(*headers, h);
+        HttpcHeader* h = httpc_header_new(key, value);
+        httpc_add_header_h(headers, h);
     }
 }
 
