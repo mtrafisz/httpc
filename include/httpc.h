@@ -1,6 +1,8 @@
 /**
  * @file httpc.h
- * @brief HTTP client library
+ * @brief HTTP parser and builder
+ * 
+ * This file contains structures and functions for parsing and building HTTP messages.
  */
 
 #ifndef _HTTPC_H_
@@ -29,8 +31,6 @@ typedef enum _htppc_method_e {
 /**
  * @brief Convert a string to a HTTP method
  * 
- * This function converts a string to a HTTP method.
- * 
  * @param method The string to convert
  * @return The HTTP method
  */
@@ -40,6 +40,7 @@ HttpcMethodType httpc_method_from_string(const char* method);
  * @brief Convert a HTTP method to a string
  * 
  * This function converts a HTTP method to a string literal.
+ * Returned string must not be freed by the caller.
  * 
  * @param method The HTTP method to convert
  * @return The string representation of the HTTP method
@@ -74,7 +75,7 @@ HttpcHeader* httpc_header_new(const char* key, const char* value);
 /**
  * @brief Free a HTTP header
  * 
- * This function frees a HTTP header, and all its children recursively.
+ * This function frees a HTTP header and all its children recursively.
  * 
  * @param header The header to free
  */
@@ -83,7 +84,7 @@ void httpc_header_free(HttpcHeader* header);
 /**
  * @brief Convert a HTTP header to a string
  * 
- * This function converts a HTTP header to a `key: value` string (without the "\\r\\n" bytes).
+ * This function converts a HTTP header to a `key: value` string (without the "\r\n" bytes).
  * Returned string must be freed by the caller.
  * 
  * @param header The header to convert
@@ -117,7 +118,7 @@ void httpc_add_header_h(HttpcHeader* header_list, HttpcHeader* header);
 /**
  * @brief Add a header to a header list
  * 
- * This function adds a header to a header list.
+ * This function adds a header to a header list. Both key and value are copied to the list.
  * 
  * @param headers The header list to add the header to
  * @param key The key of the header
@@ -129,7 +130,7 @@ void httpc_add_header_v(HttpcHeader** headers, const char* key, const char* valu
  * @brief Get the value of a header
  * 
  * This function gets the value of a header from a header list.
- * Resulting string is pointer to the value in the header list, and must not be freed by hand.
+ * Resulting string is pointer to the value in the header list, and must not be freed directly.
  * 
  * @param headers The header list to search in
  * @param key The key of the header to search for
@@ -153,13 +154,13 @@ typedef struct _httpc_req_s {
 /**
  * @brief Convert a HTTP request to a string
  * 
- * This function converts a HTTP request to a of bytes.
+ * This function converts a HTTP request to array of bytes.
  * Returned byte pointer must be freed by the caller.
- * THIS FUNCTION AUTOMATICALLY ADDS THE `Content-Length` HEADER TO THE REQUEST.
  * 
  * @param req The request to convert
  * @param out_size The size of the resulting string, can be set to `NULL` to ignore.
  * @return The string representation of the request
+ * @warning This function automatically adds the `Content-Length` header to resulting string, but not to the request itself.
  */
 char* httpc_request_to_string(HttpcRequest* req, size_t* out_size);
 
@@ -179,7 +180,7 @@ HttpcRequest* httpc_request_new(const char* url, HttpcMethodType method);
  * @brief Parse a string to a HTTP request
  * 
  * This function tries to parse a string to a HTTP request.
- * ~~If parsing fails, the function returns NULL.~~ If anything goes wrong, expect segfault.
+ * If parsing fails, the function returns NULL.
  * 
  * @param req The string to parse
  * @param size The size of the string
@@ -205,7 +206,7 @@ void httpc_request_free(HttpcRequest* req);
  * @param body The body to set
  * @param size The size of the body
  * 
- * @warning OLD BODY WILL BE FREED.
+ * @warning Old body will be freed if not NULL.
  */
 void httpc_request_set_body(HttpcRequest* req, const uint8_t* body, size_t size);
 
@@ -225,7 +226,7 @@ typedef struct _httpc_res_s {
 /**
  * @brief Convert a HTTP response to a string
  * 
- * This function converts a HTTP response to a string.
+ * This function converts a HTTP response to array of bytes.
  * Returned string must be freed by the caller.
  * 
  * @param res The response to convert
@@ -238,7 +239,7 @@ char* httpc_response_to_string(HttpcResponse* res, size_t* out_size);
  * @brief Parse a string to a HTTP response
  * 
  * This function tries to parse a string to a HTTP response.
- * ~~If parsing fails, the function returns NULL.~~ If anything goes wrong, expect segfault.
+ * If parsing fails, the function returns NULL.
  * 
  * @param res The string to parse
  * @param size The size of the string
@@ -276,7 +277,7 @@ void httpc_response_free(HttpcResponse* res);
  * @param body The body to set
  * @param size The size of the body
  * 
- * @warning OLD BODY WILL BE FREED.
+ * @warning Old body will be freed if not NULL.
  */
 void httpc_response_set_body(HttpcResponse* res, const uint8_t* body, size_t size);
 
