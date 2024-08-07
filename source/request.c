@@ -1,6 +1,10 @@
 #include <httpc.h>
 #include <internal_ba.h>
 
+#ifdef _WIN32
+#define strndup(s, size) strdup(s)
+#endif
+
 HttpcRequest* httpc_request_new(const char* url, HttpcMethodType method) {
     HttpcRequest* r = malloc(sizeof(HttpcRequest));
     r->url = strdup(url);
@@ -114,7 +118,7 @@ char* httpc_request_to_string(HttpcRequest* req, size_t* out_size) {
 
     if (req->body != NULL) {
         char content_length_str[16];
-        sprintf(content_length_str, "%ld", req->body_size - 1);
+        sprintf(content_length_str, "%lld", req->body_size - 1);
         HttpcHeader* temp = httpc_header_new("Content-Length", content_length_str);
         char* header_string = httpc_header_to_string(temp);
         httpc_header_free(temp);
