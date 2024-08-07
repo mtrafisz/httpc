@@ -118,7 +118,14 @@ char* httpc_request_to_string(HttpcRequest* req, size_t* out_size) {
 
     if (req->body != NULL) {
         char content_length_str[16];
-        sprintf(content_length_str, "%lld", req->body_size - 1);
+        
+        #ifdef _WIN32
+        const char* format = "%lld";
+        #else
+        const char* format = "%zu";
+        #endif
+
+        sprintf(content_length_str, format, req->body_size - 1);
         HttpcHeader* temp = httpc_header_new("Content-Length", content_length_str);
         char* header_string = httpc_header_to_string(temp);
         httpc_header_free(temp);
