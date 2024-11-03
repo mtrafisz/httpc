@@ -31,7 +31,7 @@ typedef struct linked_list_iterator {
 } list_iter_t;
 
 list_t list_new_ex(size_t sizeof_element, allocator_t allocator);
-#define list_new(type) list_new_ex(sizeof(type), std_allocator)
+#define list_new(type, a) list_new_ex(sizeof(type), a)
 
 list_iter_t list_iter(const list_t* list);
 void* list_next(list_iter_t* iter);

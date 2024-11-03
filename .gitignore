@@ -1,2 +1,4 @@
 utils/acutest.h
 build/
+*.log
+.vscode

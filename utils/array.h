@@ -22,7 +22,7 @@ typedef struct _array_iterator_s {
 } array_iter_t;
 
 array_t array_new_ex(size_t sizeof_element, allocator_t allocator);
-#define array_new(type) array_new_ex(sizeof(type), std_allocator)
+#define array_new(type, a) array_new_ex(sizeof(type), a)
 
 array_iter_t array_iter(array_t* array);
 void* array_next(array_iter_t* iter);

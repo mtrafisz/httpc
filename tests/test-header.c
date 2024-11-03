@@ -19,7 +19,7 @@ void test_header() {
 }
 
 void test_header_list() {
-    httpc_header_list_t list = list_new(httpc_header_t);
+    httpc_header_list_t list = list_new(httpc_header_t, httpc_allocator);
     TEST_CHECK(list.size == 0);
     TEST_CHECK(list.head == NULL);
 

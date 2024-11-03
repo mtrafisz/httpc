@@ -9,7 +9,7 @@ const allocator_t std_allocator = {
 };
 
 void test_array() {
-    array_t(int) array = array_new(int);
+    array_t(int) array = array_new(int, std_allocator);
     TEST_CHECK(array.size == 0);
     TEST_CHECK(array.capacity == 0);
     TEST_CHECK(array.data == NULL);
@@ -44,7 +44,7 @@ void test_array() {
     TEST_CHECK(array.capacity == 0);
     TEST_CHECK(array.data == NULL);
 
-    array_t byte_array = array_new(byte);
+    array_t byte_array = array_new(byte, std_allocator);
 
     byte data2[] = "Jebać PiS";
     TEST_CHECK(array_append_v(&byte_array, data2, strlen(data2)));

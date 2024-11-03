@@ -10,14 +10,11 @@ add_library (httpc_so SHARED ${LOCAL_SOURCES} ${UTILS_SOURCES})
 target_include_directories (httpc_a PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 target_include_directories (httpc_so PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 
-# tests
-
 set (BUILD_TESTS ON)
 
 file (DOWNLOAD "https://raw.githubusercontent.com/mity/acutest/refs/heads/master/include/acutest.h" "${CMAKE_CURRENT_SOURCE_DIR}/utils/acutest.h")
 file (GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.c")
 
-# check if acutest is downloaded:
 if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/utils/acutest.h")
     message (WARNING "acutest.h not found. Tests will not be built.")
     set (BUILD_TESTS OFF)
